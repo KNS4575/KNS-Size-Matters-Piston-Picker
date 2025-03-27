@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>KNS Piston Picker</title>
+  <style>
+    body { font-family: Arial; margin: 2rem; }
+    input, select, button { margin: 0.5rem 0; padding: 0.4rem; }
+  </style>
+</head>
+<body>
+  <h2>KNS Adjustable Piston Picker</h2>
+  <label>Working Length:
+    <input id="wl" type="number" step="0.001">
+  </label><br>
+  <label>Hole Distance:
+    <input id="hd" type="number" step="0.001">
+  </label><br>
+  <label>Unit:
+    <select id="unit">
+      <option value="in">Inches</option>
+      <option value="mm">Millimeters</option>
+    </select>
+  </label><br>
+  <button onclick="matchPiston()">Find Matching Model</button>
+
+  <h3>Matching Model(s):</h3>
+  <pre id="result"></pre>
+
+  <script>
+    const pistonModels = [
+      {model: "AGP-A-13", wl: [9.580, 9.680], hd: [0.230, 0.330]},
+      {model: "AGP-A-27", wl: [7.540, 7.640]},
+      {model: "AGP-A-10", wl: [5.780, 5.880], hd: [0.260, 0.360]},
+      {model: "AGP-A-18 (Galil specific)", wl: [5.760, 5.860], hd: [0.260, 0.360]},
+      {model: "AGP-A-20", wl: [5.700, 5.800], hd: [0.250, 0.350]},
+      {model: "AGP-A-17", wl: [5.570, 5.670], hd: [0.370, 0.470]},
+      {model: "AGP-A-9", wl: [5.570, 5.670], hd: [0.270, 0.370]},
+      {model: "AGP-A-16", wl: [5.570, 5.670]},
+      {model: "AGP-A-32", wl: [5.570, 5.670], hd: [0.270, 0.370]},
+      {model: "AGP-A-28", wl: [5.457, 5.570], hd: [0.270, 0.370]},
+      {model: "AGP-A-7", wl: [4.730, 4.830], hd: [0.270, 0.370]},
+      {model: "AGP-A-6", wl: [4.620, 4.720], hd: [0.260, 0.360]},
+      {model: "AGP-A-8 (Galil specific)", wl: [4.610, 4.710], hd: [0.260, 0.360]},
+      {model: "AGP-A-5", wl: [4.360, 4.460], hd: [0.260, 0.360]},
+      {model: "AGP-A-23", wl: [4.190, 4.240], hd: [0.260, 0.360]},
+      {model: "AGP-A-4", wl: [3.850, 3.950], hd: [0.260, 0.360]},
+      {model: "AGP-A-3", wl: [2.170, 2.270], hd: [0.260, 0.360]},
+      {model: "AGP-A-19", wl: [1.980, 2.080], hd: [0.370, 0.470]},
+      {model: "AGP-A-1", wl: [1.980, 2.080], hd: [0.270, 0.370]},
+      {model: "AGP-A-30", wl: [1.930, 2.030], hd: [0.230, 0.330]},
+      {model: "AGP-A-26", wl: [1.340, 1.440], hd: [0.250, 0.350]},
+      {model: "AGP-A-25 (Galil specific)", wl: [1.010, 1.110], hd: [0.250, 0.350]}
+    ];
+
+    function toInches(value, unit) {
+      return unit === "mm" ? value / 25.4 : value;
+    }
+
+    function matchPiston() {
+      const wlInput = parseFloat(document.getElementById('wl').value);
+      const hdInput = parseFloat(document.getElementById('hd').value);
+      const unit = document.getElementById('unit').value;
+      const wl = toInches(wlInput, unit);
+      const hd = toInches(hdInput, unit);
+
+      const result = [];
+
+      pistonModels.forEach(p => {
+        if (wl >= p.wl[0] && wl <= p.wl[1]) {
+          if (!p.hd || (hd >= p.hd[0] && hd <= p.hd[1])) {
+            result.push(p.model);
+          }
+        }
+      });
+
+      document.getElementById('result').textContent = result.length
+        ? result.join('\n')
+        : "No matching model found. Please double-check your measurements.";
+    }
+  </script>
+</body>
+</html>
